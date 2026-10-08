@@ -1,0 +1,25 @@
+# ./mcp_test.sh, 2026-10-08T11:36:58-04:00, Claude Code 2.1.294 (Claude Code)
+=== 1. Direct search_corpus call
+query: 'meeting'  arguments sent: {"query": "meeting"}
+
+corpus    results
+gmail           8
+drive           9
+calendar       13
+chat            0
+total          30
+
+Gmail threads hold 8 messages; Chat results hold 0 messages.
+
+direct: PASS
+
+=== 2. Through Claude Code
+
+server               result           calls  ok  err spilled
+workspace-universal  PASS                 1   1    0       1
+
+Claude Code saved the result to a file instead of passing it to the model (over its MCP output size limit); the model saw a preview. Counts below are from the server's result, which Claude Code records in the event stream.
+
+Results per corpus, counted from the tool results: gmail 8, drive 10, calendar 12, chat 0
+Queries the model sent: 'meeting'
+exit: 0

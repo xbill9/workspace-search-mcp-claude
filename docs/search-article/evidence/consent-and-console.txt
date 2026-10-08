@@ -1,0 +1,20 @@
+# Google pages read through Claude in Chrome, 2026-10-08 (get_page_text and a JavaScript read of the page).
+
+## Data Access page (console.cloud.google.com/auth/scopes), after adding the four scopes and Save, then a reload
+calendar_readonly: true
+gmail: true
+drive: true
+chat: true
+sensitive scopes pager: 1 – 10 of 14   (before the change: 1 – 10 of 13)
+
+## Consent page for workspace-universal (accounts.google.com/signin/oauth/v3/consent)
+Workspace MCP Servers wants access to your Google Account
+This will allow Workspace MCP Servers to:
+View your email messages and settings
+See and download all your Google Drive files
+See messages as well as their reactions and message content in Google Chat
+See and download any calendar you can access using your Google Calendar
+
+## Enabling the APIs (gcloud services enable ... workspacemcp.googleapis.com)
+Operation "operations/acat.p2-…" finished successfully.
+enabled of the five: 5

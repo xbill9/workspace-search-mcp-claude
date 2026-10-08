@@ -1,0 +1,2 @@
+# Google OpenID configuration, 2026-10-08T11:35:49-04:00
+scopes_supported: ['openid', 'email', 'profile']

@@ -1,0 +1,7 @@
+# Authorization URL built by Claude Code 2.1.294 for workspace-universal (mcp_login.sh start), 2026-10-08.
+# Parameter names and scope/resource values only; client_id, state and code_challenge omitted.
+host: accounts.google.com/o/oauth2/v2/auth
+parameters: client_id, code_challenge, code_challenge_method, redirect_uri, resource, response_type, scope, state
+scope: https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/chat.messages.readonly
+resource: https://workspacemcp.googleapis.com/mcp/v1
+access_type present: False

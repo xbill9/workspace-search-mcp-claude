@@ -1,0 +1,42 @@
+# make test, 2026-10-08T11:37:27-04:00
+=== syntax
+--- syntax: ok
+=== shellcheck
+--- shellcheck: ok
+=== unit (wsearch.py)
+Ran 25 tests in 0.008s
+--- unit (wsearch.py): ok
+=== consistency
+Ran 10 tests in 0.006s
+--- consistency: ok
+=== scripts (stub claude)
+ok    claude_setup.sh exits 0
+ok    registers workspace-universal with add-json --client-secret
+ok    uses the workspacemcp URL
+ok    pins scope gmail.readonly
+ok    pins scope drive.readonly
+ok    pins scope calendar.readonly
+ok    pins scope chat.messages.readonly
+ok    secret passed through the environment
+ok    secret never in argv
+ok    secret never printed
+ok    callback port 8765 by default
+ok    registers workspace-developer
+ok    no offline_access scope
+ok    add-json payload is valid JSON without the secret
+ok    CORPORA=drive chat pins exactly two scopes
+ok    unknown corpus is rejected
+ok    MCP_SCOPE and CALLBACK_PORT are honoured
+ok    missing OAuth client exits non-zero
+ok    missing OAuth client registers nothing
+ok    mcp_login.sh refuses other server names
+ok    mcp_login.sh check defaults to workspace-universal and reports not signed in
+ok    mcp_search.sh without a query prints usage
+ok    search without a stored token exits 2, no network call
+ok    grade passes the PASS fixture
+ok    grade fails the FAIL fixture
+0 failure(s).
+--- scripts (stub claude): ok
+=== plugin validate
+--- plugin validate: ok
+0 stage(s) failed.

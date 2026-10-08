@@ -1,0 +1,13 @@
+# ./mcp_probe.sh, 2026-10-08T11:35:44-04:00, no credentials
+server              workspace-universal
+url                 https://workspacemcp.googleapis.com/mcp/v1
+advertises 2026-07-28  yes
+versions            2024-11-05, 2025-03-26, 2025-06-18, 2025-11-25, 2026-07-28
+legacy initialize   2025-11-25
+tools               1: search_corpus
+  search_corpus(pageSize, pageToken, query*)  readOnlyHint=True
+resource scopes     9
+  gmail     https://mail.google.com/, gmail.modify, gmail.readonly
+  drive     drive, drive.readonly
+  calendar  calendar, calendar.readonly
+  chat      chat.messages, chat.messages.readonly

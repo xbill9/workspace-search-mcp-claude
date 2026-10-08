@@ -1,0 +1,26 @@
+# What the model received for one search_corpus call (query 'meeting') in `claude -p --output-format stream-json`,
+# Claude Code 2.1.294, 2026-10-08. Paths replaced with <path>; the 2 KB preview of account data is cut.
+
+## default settings
+is_error: None
+chars received: 1776
+Error: result (52,547 characters) exceeds maximum allowed tokens. Output has been saved to <path>
+Format: JSON with schema: {items: [{...}]}
+Use jq to make structured queries (find a value, filter by field).
+tool_use_result.structuredContent items: 30
+
+## MAX_MCP_OUTPUT_TOKENS=50000
+is_error: None
+chars received: 2268
+<persisted-output>
+Output too large (51.3KB). Full output saved to: <path>
+
+tool_use_result.structuredContent items: 30
+
+## MAX_MCP_OUTPUT_TOKENS=50000 ENABLE_MCP_LARGE_OUTPUT_FILES=false
+is_error: None
+chars received: 2268
+<persisted-output>
+Output too large (51.3KB). Full output saved to: <path>
+
+tool_use_result.structuredContent items: 30

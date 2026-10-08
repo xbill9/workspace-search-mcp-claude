@@ -1,0 +1,15 @@
+# ./claude_setup.sh, 2026-10-08, Claude Code 2.1.294 (output as printed), then claude mcp list filtered to workspace-*
+Adding workspace-universal to Claude Code (scope: user, corpora: gmail drive calendar chat)
+Redirect URI required on the OAuth client: http://localhost:8765/callback
+
+Added http MCP server workspace-universal to user config
+Added HTTP MCP server workspace-developer with URL: https://workspace-developer.goog/mcp to user config
+File modified: /home/xbill/.claude.json
+
+Next: sign in, either inside Claude Code with /mcp, or from the shell:
+
+  claude mcp login workspace-universal
+
+Then check with: ./mcp_status.sh --verify
+workspace-universal: https://workspacemcp.googleapis.com/mcp/v1 (HTTP) - ✔ Connected
+workspace-developer: https://workspace-developer.goog/mcp (HTTP) - ✔ Connected

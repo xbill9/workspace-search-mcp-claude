@@ -1,0 +1,6 @@
+# ./mcp_status.sh --verify, 2026-10-08T11:35:45-04:00
+server               registered  token    min left  refresh  corpora
+workspace-universal  yes         valid          13  no       gmail,drive,calendar,chat
+
+Google accepts the token; search_corpus can search 4 of 4 corpora.
+No refresh token: this sign-in ends when the minutes reach zero.

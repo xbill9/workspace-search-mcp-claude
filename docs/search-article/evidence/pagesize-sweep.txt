@@ -1,0 +1,23 @@
+# search_corpus called directly with the stored token, 2026-10-08T11:36:01-04:00
+# counts computed by wsearch.count_by_corpus; chars = len(json.dumps(structuredContent)); no result content recorded
+
+## pageSize sweep, query 'meeting'
+pageSize  gmail drive calendar chat total  chars nextPageToken
+None          8     9       13    0    30  55076 False
+1             9     9       12    0    30  56316 False
+2             8     9       13    0    30  55076 False
+3             8     9       13    0    30  55076 False
+5             8    10       12    0    30  53002 False
+10            8     9       13    0    30  55076 False
+50            8     9       13    0    30  55076 False
+
+## repeated identical call, query 'meeting', no pageSize
+run 1        8     9       13    0    30  55076 False
+run 2        8    10       12    0    30  53002 False
+run 3        8    10       12    0    30  53002 False
+
+## other queries, no pageSize
+'standup'      gmail 10 drive 10 calendar  7 chat  2 total 29 chars 111795 gmail_messages 10 chat_messages 18
+'lunch'        gmail  9 drive  9 calendar 10 chat  2 total 30 chars  76143 gmail_messages 9 chat_messages 28
+'today'        gmail  8 drive  8 calendar 12 chat  2 total 30 chars  90249 gmail_messages 13 chat_messages 44
+'Q3 planning'  gmail 12 drive  9 calendar  8 chat  0 total 29 chars  94018 gmail_messages 17 chat_messages 0
