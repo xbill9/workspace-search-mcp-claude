@@ -62,6 +62,8 @@ class Consistency(unittest.TestCase):
     def test_no_per_product_servers_left_in_scripts(self):
         scripts = os.path.join(SKILL, "scripts")
         for f in os.listdir(scripts):
+            if not os.path.isfile(os.path.join(scripts, f)):
+                continue
             s = read(scripts, f)
             for old in OLD_SERVERS:
                 self.assertNotIn(f"{old}.googleapis.com", s, f"{old} in scripts/{f}")

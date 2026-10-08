@@ -1,7 +1,8 @@
 # Quirks
 
 Behaviour of the Universal Search MCP server and of Claude Code around it.
-Server entries are from `mcp_probe.sh` and direct requests on 2026-10-08; the
+Server entries are from `mcp_probe.sh`, direct requests and signed-in calls
+on 2026-10-08 (Claude Code 2.1.294); the
 sign-in, Claude Code and console entries were measured on the per-product
 Workspace MCP servers (2026-10-04 to 2026-10-06, Claude Code 2.1.289–2.1.292)
 and concern the same sign-in pages, client and console. The two sign-in limits
@@ -21,10 +22,18 @@ with lasting impact are in `known-issues.md`.
 - **Two server names.** `server/discover` reports `workspacemcp`; `initialize`
   reports `StatelessServer`. Its `instructions` mention Drive, Gmail and
   Calendar; the tool covers Chat as well.
-- **`pageToken` is in the schema, pagination is not.** The tool description
-  says cross-corpus search does not paginate, while `inputSchema` has
-  `pageToken` and `outputSchema` has `nextPageToken`. `mcp_search.sh` reports
-  whether a `nextPageToken` came back.
+- **`pageSize` is ignored, and so is paging.** Measured 2026-10-08: with
+  `pageSize` unset, 1, 2, 3, 5 and 10, query "meeting" returned 30 items every
+  time (about 53,000–56,000 characters); "standup", "lunch" and "today"
+  returned 29–30. No response carried a `nextPageToken`, matching the tool
+  description ("Pagination is not supported"), although the schema has
+  `pageToken` and `nextPageToken`.
+- **The split across corpora varies between identical calls.** The same
+  query returned gmail 8 / drive 9 / calendar 13, then 9 / 9 / 12, then
+  8 / 10 / 12. Counts per corpus are a property of one response, not of the
+  mailbox; do not compare them across calls as if they were totals.
+- **Results are large.** Calendar descriptions carry whole meeting invites
+  (dial-in numbers, passcodes); one 30-item response is about 52 KB.
 - **One Gmail result is a thread.** A `gmailResult` holds a thread with its
   messages, and a `chatResult` a group of messages. Item count and message
   count differ; `wsearch.py` reports both.
@@ -67,6 +76,16 @@ with lasting impact are in `known-issues.md`.
 - **The client secret is set only when a server is added**
   (`--client-secret` with `MCP_CLIENT_SECRET`). Changing it means removing and
   adding the server again, which `claude_setup.sh` does.
+- **A broad search result never reaches the model inline** (Claude Code
+  2.1.294, measured 2026-10-08). A 52 KB `search_corpus` result is over
+  Claude Code's MCP output limit: the model gets "Error: result (52,547
+  characters) exceeds maximum allowed tokens. Output has been saved to …" and
+  instructions to read the file in chunks. `is_error` stays unset. With
+  `MAX_MCP_OUTPUT_TOKENS=50000` a second limit applies: `<persisted-output>`
+  "Output too large (51.3KB)" with a 2 KB preview. The undocumented
+  `ENABLE_MCP_LARGE_OUTPUT_FILES=0` did not change it. The server's full result
+  is still recorded in the stream-json event (`tool_use_result.structuredContent`),
+  which is what `mcp_test.sh` counts from. For counts, use `mcp_search.sh`.
 - **MCP tools in a headless session are deferred** and reached through
   ToolSearch; the `init` event's `tools` list may not show them.
 - **Auto mode blocks credential handling.** Reading the client secret from the

@@ -27,7 +27,7 @@ RC=0
 
 echo "=== 1. Direct search_corpus call"
 # Counts only: the per-result lines (other people's content) are cut.
-python3 "$SCRIPT_DIR/wsearch.py" search "$QUERY" --page-size 10 | sed '/^Results/,$d'
+python3 "$SCRIPT_DIR/wsearch.py" search "$QUERY" | sed '/^Results/,$d'
 if [ "${PIPESTATUS[0]}" -eq 0 ]; then
     echo "direct: PASS"
 else
@@ -40,7 +40,7 @@ fi
 echo ""
 echo "=== 2. Through Claude Code"
 PROMPT="Test the Universal Search MCP server. Read only. Call the workspace-universal
-search_corpus tool exactly once with query \"$QUERY\" and pageSize 10.
+search_corpus tool exactly once with query \"$QUERY\".
 Reply with one line: done."
 
 EVENTS=$(mktemp)

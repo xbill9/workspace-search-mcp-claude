@@ -141,6 +141,18 @@ class Grade(unittest.TestCase):
         self.assertEqual(g["totals"], {"gmail": 2, "drive": 3, "calendar": 1, "chat": 1})
         self.assertEqual(g["queries"], ["meeting"])
 
+    def test_spilled_counts_from_recorded_result(self):
+        # Claude Code 2.1.294: over its MCP output limit the model gets a notice,
+        # and the server's result is recorded in tool_use_result.
+        for name in ("stream-spilled.jsonl", "stream-persisted.jsonl"):
+            g = self.grade(name)
+            self.assertEqual(g["status"], "PASS", name)
+            self.assertEqual(g["spilled"], 1, name)
+            self.assertEqual(g["totals"], {"gmail": 2, "drive": 3, "calendar": 1, "chat": 1}, name)
+
+    def test_inline_result_not_spilled(self):
+        self.assertEqual(self.grade("stream-pass.jsonl")["spilled"], 0)
+
     def test_fail(self):
         g = self.grade("stream-fail.jsonl")
         self.assertEqual(g["status"], "FAIL")

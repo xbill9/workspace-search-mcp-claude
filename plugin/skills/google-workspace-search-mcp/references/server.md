@@ -56,8 +56,8 @@ Arguments:
 | Argument | Type | |
 |---|---|---|
 | `query` | string | required: the user's raw query |
-| `pageSize` | int32 | optional maximum number of results |
-| `pageToken` | string | optional; the tool description says cross-corpus search does not paginate |
+| `pageSize` | int32 | in the schema; ignored (30 items whatever the value, measured 2026-10-08) |
+| `pageToken` | string | in the schema; the tool description says cross-corpus search does not paginate, and no response carried a `nextPageToken` |
 
 Result (`structuredContent`): `items[]`, each item holding exactly one of:
 
@@ -70,6 +70,11 @@ Result (`structuredContent`): `items[]`, each item holding exactly one of:
 
 plus an optional `nextPageToken`. Gmail attachments are described inside the
 message `snippet`, not in a separate field.
+
+A broad query returns about 30 items, roughly 52 KB, and the split across
+corpora varies between identical calls. In Claude Code 2.1.294 that is over the
+MCP output limit, so the model receives a saved-to-file notice instead of the
+result (`quirks.md` §3).
 
 The tool description tells the model to call `search_corpus` first when a
 question names no product, and to fall back to per-product tools

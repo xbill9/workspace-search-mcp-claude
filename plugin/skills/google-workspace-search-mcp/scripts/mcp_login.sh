@@ -37,7 +37,7 @@ case "$ACTION" in
         ( sleep 600 | BROWSER=/bin/true script -qfec "claude mcp login $SERVER" /dev/null ) >> "$LOG" 2>&1 &
         for _ in $(seq 1 30); do
             URL=$(grep -ao 'https://accounts.google.com/o/oauth2/v2/auth[^[:space:]]*' "$LOG" \
-                | head -1 | sed 's/\x1b.*//')
+                | head -1 | sed 's/\x1b.*//' | tr -d '\a')
             [ -n "$URL" ] && break
             grep -q 'Authenticated with' "$LOG" && { echo "Already signed in: $SERVER"; exit 0; }
             sleep 1

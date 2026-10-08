@@ -119,7 +119,9 @@ when they asked you to sign in for them. `start` revokes the current token
 ```
 
 Report its tables as printed. A corpus with 0 results means either no match or
-no scope for it; `mcp_status.sh --verify` tells which. Tools registered or
+no scope for it; `mcp_status.sh --verify` tells which. `spilled 1` means Claude
+Code saved the result to a file instead of passing it to the model; the counts
+still come from the server's result. Tools registered or
 signed in during a session load in the next session, so tell the user to
 restart Claude Code before using the tool interactively. The offline suite is
 `tests/run.sh` in the repository (`--live` adds the probe and this test).
@@ -127,8 +129,11 @@ restart Claude Code before using the tool interactively. The offline suite is
 ## Searching for the user
 
 - Call `search_corpus` with the user's own words as `query`. It fans out to
-  every granted corpus; pagination is not supported, so ask for a larger
-  `pageSize` rather than paging.
+  every granted corpus and returns about 30 items; `pageSize` and paging have
+  no effect.
+- A broad result (about 52 KB) is over Claude Code's MCP output limit, so you
+  receive a saved-to-file notice and a preview, not the items. Read the saved
+  file with `jq`, or run `mcp_search.sh`, which prints one line per result.
 - **Counting belongs in code.** For "how many…" questions, run
   `mcp_search.sh "<query>" --json` and quote its `counts`, rather than counting
   `items` yourself. Check the query you sent matches what the user asked: an

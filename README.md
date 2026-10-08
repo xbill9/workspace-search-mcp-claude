@@ -21,7 +21,7 @@ Then ask Claude Code something like *"set up Workspace search"* or *"search my W
 |---|---|
 | Name in Claude Code | `workspace-universal` |
 | URL | `https://workspacemcp.googleapis.com/mcp/v1` |
-| Tool | `search_corpus(query, pageSize?, pageToken?)`, read-only |
+| Tool | `search_corpus(query)`, read-only; `pageSize` and `pageToken` are in the schema and have no effect |
 | Searches | Gmail threads, Drive files, Calendar events, Chat messages |
 | MCP versions | 2024-11-05 to 2026-07-28 (`server/discover`); `initialize` negotiates 2025-11-25 |
 | Auth | OAuth 2.0, Web application client |
@@ -40,6 +40,10 @@ One scope per corpus. The server searches only the corpora whose scope the sign-
 | chat | `chat.messages.readonly` |
 
 `claude_setup.sh` pins all four. `CORPORA="drive calendar" ./claude_setup.sh` pins a subset. `./mcp_status.sh --verify` reads the granted scopes back from Google and names the corpora they cover.
+
+## Known issue: results are too big for Claude Code
+
+A broad query returns about 30 items (about 52 KB) whatever `pageSize` says. In Claude Code 2.1.294 that is over the MCP output limit: the model gets a "saved to file" notice and a preview instead of the results, and `MAX_MCP_OUTPUT_TOKENS` only moves it to a second ~50 KB limit. `./mcp_search.sh` reads the full result and counts it in code; `./mcp_test.sh` reports the spill in a `spilled` column. Measured 2026-10-08; details in [`quirks.md`](plugin/skills/google-workspace-search-mcp/references/quirks.md).
 
 ## Known issues: sign-in
 
@@ -107,8 +111,8 @@ The Chat app configuration the per-product Chat server needs is not part of Goog
 Every count the scripts print is computed in `scripts/wsearch.py`, never left to the model: `mcp_test.sh` grades Claude Code's session from the tool calls and tool results in its event stream, and counts the results per corpus from the tool result itself.
 
 ```
-$ ./mcp_search.sh "meeting" --page-size 10
-query: 'meeting'  arguments sent: {"query": "meeting", "pageSize": 10}
+$ ./mcp_search.sh "meeting"
+query: 'meeting'  arguments sent: {"query": "meeting"}
 
 corpus    results
 gmail           2

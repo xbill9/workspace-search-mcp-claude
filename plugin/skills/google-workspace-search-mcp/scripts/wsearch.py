@@ -174,6 +174,14 @@ def describe_item(item):
     return "other", "", ""
 
 
+SPILL_MARKERS = ("exceeds maximum allowed tokens", "<persisted-output>")
+
+
+def is_spilled(text):
+    """True when Claude Code replaced a tool result with a saved-to-file notice."""
+    return any(m in (text or "") for m in SPILL_MARKERS)
+
+
 def grade_events(lines, tool_prefix=f"mcp__{NAME}__"):
     """Grade a `claude -p --output-format stream-json` session.
 
@@ -202,11 +210,22 @@ def grade_events(lines, tool_prefix=f"mcp__{NAME}__"):
                 content = c.get("content")
                 if isinstance(content, str):
                     content = [{"type": "text", "text": content}]
-                results[c["tool_use_id"]] = {"isError": bool(c.get("is_error")),
-                                             "content": content or []}
-    ok, err = [], []
+                raw = e.get("tool_use_result")
+                results[c["tool_use_id"]] = {
+                    "isError": bool(c.get("is_error")),
+                    "content": content or [],
+                    # Claude Code records the server's own result here, even
+                    # when the model was handed only a spill notice.
+                    "structuredContent": raw.get("structuredContent") if isinstance(raw, dict) else None,
+                }
+    ok, err, spilled = [], [], []
     totals = {k: 0 for k in CORPORA}
     for cid, res in results.items():
+        text = "".join(b.get("text", "") for b in res["content"] if isinstance(b, dict))
+        if is_spilled(text):
+            spilled.append(cid)
+        if not isinstance(res["structuredContent"], dict):
+            res = {k: v for k, v in res.items() if k != "structuredContent"}
         payload, is_error, _ = tool_payload(res)
         if is_error:
             err.append(cid)
@@ -225,7 +244,7 @@ def grade_events(lines, tool_prefix=f"mcp__{NAME}__"):
     else:
         status = "NOT CALLED"
     return {"status": status, "connected": connected, "calls": len(calls),
-            "ok": len(ok), "err": len(err), "totals": totals,
+            "ok": len(ok), "err": len(err), "spilled": len(spilled), "totals": totals,
             "queries": [calls[i].get("query") for i in calls]}
 
 
@@ -400,8 +419,12 @@ def cmd_search(query, page_size=None, as_json=False):
 
 def cmd_grade(path):
     g = grade_events(open(path))
-    print(f"\n{'server':<20} {'result':<16} {'calls':>5} {'ok':>3} {'err':>4}")
-    print(f"{NAME:<20} {g['status']:<16} {g['calls']:>5} {g['ok']:>3} {g['err']:>4}")
+    print(f"\n{'server':<20} {'result':<16} {'calls':>5} {'ok':>3} {'err':>4} {'spilled':>7}")
+    print(f"{NAME:<20} {g['status']:<16} {g['calls']:>5} {g['ok']:>3} {g['err']:>4} {g['spilled']:>7}")
+    if g["spilled"]:
+        print("\nClaude Code saved the result to a file instead of passing it to the model"
+              " (over its MCP output size limit); the model saw a preview. Counts below are"
+              " from the server's result, which Claude Code records in the event stream.")
     if g["ok"]:
         print(f"\nResults per corpus, counted from the tool results: "
               + ", ".join(f"{c} {n}" for c, n in g["totals"].items()))

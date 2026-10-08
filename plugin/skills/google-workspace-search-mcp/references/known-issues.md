@@ -11,8 +11,10 @@ per-product servers. The measurements are from the per-product servers
 `workspace-universal` uses the same authorization server, `accounts.google.com`
 (its protected resource metadata, checked 2026-10-08).
 
-After the first sign-in, `mcp_status.sh --verify` shows the `refresh` column
-for `workspace-universal` directly.
+Confirmed on `workspace-universal` on 2026-10-08 with Claude Code 2.1.294:
+the authorization URL carried the four pinned scopes and no `access_type`, and
+after sign-in `mcp_status.sh --verify` showed `valid`, 60 minutes left,
+refresh `no`.
 
 ## 1. Sign-ins last about an hour
 
