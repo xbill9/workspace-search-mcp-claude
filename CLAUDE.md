@@ -17,7 +17,7 @@ This workspace connects Claude Code to Google's Universal Search MCP server for 
 2. **Auth failures:** sign-ins last about an hour (no refresh token), and signing in again while the token still works revokes every token on that OAuth client, including the per-product Workspace servers if they share it. `./mcp_status.sh --verify` shows whether Google still accepts the token and which corpora it covers. See `plugin/skills/google-workspace-search-mcp/references/known-issues.md` and `quirks.md`. A `401` or "unregistered callers" means sign in again. A corpus that always returns nothing means its scope was not granted. For gcloud or ADC problems, `source ./set_adc.sh`.
 3. **Checking the server:** `./mcp_probe.sh` (needs no credentials).
 4. **Searching without a model:** `./mcp_search.sh "<query>" [--json]` prints exact counts per corpus.
-5. **Testing:** `tests/run.sh` (offline); `./mcp_test.sh` or `tests/run.sh --live` once signed in.
+5. **Testing:** `make test` (offline, runs `tests/run.sh`); `make e2e` or `make test-live` once signed in. `make help` lists every target.
 6. **Changing the server name, URL, scopes or APIs:** update `claude_setup.sh`, `wsearch.py`, `bootstrap.sh`, `init.sh`, `.gemini/settings.json`, `references/server.md` and `README.md` together; `tests/test_consistency.py` fails until they agree.
 7. **Releasing the plugin:** bump `version` in both `plugin/.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`, then `tests/run.sh` (which runs `claude plugin validate` on both).
 

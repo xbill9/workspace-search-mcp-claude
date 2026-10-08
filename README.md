@@ -127,9 +127,13 @@ total           7
 ## Tests
 
 ```bash
-tests/run.sh          # offline: syntax, shellcheck, unit, consistency, script behaviour, plugin validate
-tests/run.sh --live   # adds the no-credential probe and, when signed in, mcp_test.sh
+make test             # offline: syntax, shellcheck, unit, consistency, script behaviour, plugin validate
+make test-live        # adds the no-credential probe and, when signed in, mcp_test.sh
+make search Q="Q3 planning"   # direct search, counts per corpus
+make help             # every target
 ```
+
+`make test` and `make test-live` run `tests/run.sh` and `tests/run.sh --live`.
 
 - `tests/test_wsearch.py`: scope-to-corpus mapping (including the guide's partial-grant example), token selection from Claude Code's store, JSON and SSE response parsing, per-corpus counting, and grading of PASS, FAIL and NOT CALLED sessions from fixtures.
 - `tests/test_consistency.py`: the server name, URL, scopes and APIs agree across the scripts, `.gemini/settings.json`, the docs and the manifests; `offline_access` stays out of the pinned scopes.
