@@ -1,0 +1,166 @@
+Source: https://developers.google.com/workspace/guides/universal-search-mcp (fetched 2026-10-08)
+
+Home
+          Google Workspace
+          Guides
+    Send feedback
+      Let AI agents search across workspace with the Universal Search MCP Server for Workspace
+      Stay organized with collections
+      Save and categorize content based on your preferences.
+Developer Preview: Available as part of the
+Google Workspace Developer Preview Program,
+which grants early access to certain features.
+The Universal Search MCP Server for Google Workspace uses the
+Model Context Protocol (MCP)
+standard to allow AI agents to search your Workspace artifacts. This server
+provides a way to search across multiple Google Workspace products,
+including Gmail messages, Google Drive files, Google Calendar
+events, and Google Chat spaces and messages, using a single tool.
+The Universal Search MCP Server provides a standardized way for AI agents to
+search for information across your entire Google Workspace account without
+needing to call individual product-specific tools.
+Prerequisites
+Membership in the
+Google Workspace Developer Preview Program.
+A Google Cloud project. To create a project, see
+Create a project.
+An MCP client, like Google Antigravity.
+To run the commands on this page, set up the gcloud CLI in one of the
+following development environments:
+Cloud Shell
+To use an online terminal with the gcloud CLI already set up, activate
+Cloud Shell:
+Activate Cloud Shell 
+Local shell
+To use a local development environment, follow these steps:
+Install the Google Cloud CLI.
+If you installed the gcloud CLI previously, make sure you have the
+latest version by running `gcloud components update`.
+If you're using an external identity provider (IdP), sign in to the
+gcloud CLI with your federated identity. For more information, see
+Sign in to the gcloud CLI with your federated identity.
+Initialize the gcloud CLI.
+Configure the Universal Search MCP Server
+To use the Universal Search MCP Server, you must enable it in your
+Google Cloud project and then configure your MCP client to connect to it.
+Enable the APIs
+To use the Universal Search MCP Server, enable the Google Workspace
+MCP API and the APIs for the products that you want to search in your Google Cloud
+project:
+Gmail API
+Google Drive API
+Google Calendar API
+Google Chat API
+Google Workspace MCP API
+CLI``gcloud services enable gmail.googleapis.com \
+drive.googleapis.com \
+calendar-json.googleapis.com \
+chat.googleapis.com \
+workspacemcp.googleapis.com --project=PROJECT_ID
+``
+Replace `PROJECT_ID` with your Google Cloud project ID.
+Console
+Enable the APIs in the Google Cloud console:
+Enable the APIs 
+Set up the OAuth consent screen
+The Universal Search MCP Server uses OAuth 2.0 for authentication and authorization.
+You must configure the OAuth consent screen before you can create an OAuth client ID.
+If you have already configured the OAuth consent screen for other MCP servers,
+ensure you have added the required scopes for the Universal Search MCP Server.
+When you authenticate with the Universal Search MCP Server, you can choose to
+authenticate all requested scopes or only a subset of them. The server respects
+these choices and only searches across the products for which access has been
+granted.
+For example, if you authenticate with all of the following scopes:
+`https://www.googleapis.com/auth/gmail.readonly`
+`https://www.googleapis.com/auth/drive.readonly`
+`https://www.googleapis.com/auth/calendar.readonly`
+`https://www.googleapis.com/auth/chat.messages.readonly`
+Universal Search MCP Server will search across Gmail, Google Drive,
+Google Calendar, and Google Chat.
+However, if you only grant access to
+`https://www.googleapis.com/auth/drive.readonly`,
+`https://www.googleapis.com/auth/calendar.readonly`,
+and `https://www.googleapis.com/auth/chat.messages.readonly`
+(and omit `https://www.googleapis.com/auth/gmail.readonly`), universal search
+only returns results from Google Drive, Google Calendar, and Google Chat.
+It doesn't search your email or return Gmail results.
+In the Google Cloud console, go to Google Auth Platform > Data Access.
+Click Add or Remove Scopes.
+Add one or more of the following scopes:
+`https://www.googleapis.com/auth/gmail.readonly`
+`https://www.googleapis.com/auth/drive.readonly`
+`https://www.googleapis.com/auth/calendar.readonly`
+`https://www.googleapis.com/auth/chat.messages.readonly`
+Click Update and then Save.
+For detailed instructions on setting up the consent screen, see
+Configure the Google Workspace MCP servers.
+Configure your MCP client
+To add the Universal Search MCP Server to your MCP client, follow the
+instructions for your client.
+Antigravity
+To add the Universal Search MCP Server to Antigravity,
+add the server configuration to your `mcp_config.json` file. These
+instructions support Antigravity 2.0, Antigravity IDE, and Antigravity CLI.
+Create an OAuth 2.0 client ID and secret of type Web application. In the
+Authorized redirect URIs section, click + Add URI, and then add
+`https://antigravity.google/oauth-callback` in the URIs field. For
+instructions, see Configure the Google Workspace MCP servers.
+Open or create the configuration file `~/.gemini/config/mcp_config.json`.
+Add the `workspace-universal` configuration to `mcp_config.json`:
+``{
+  "mcpServers": {
+    "workspace-universal": {
+      "serverUrl": "https://workspacemcp.googleapis.com/mcp/v1",
+      "oauth": {
+        "clientId": "OAUTH_CLIENT_ID",
+        "clientSecret": "OAUTH_CLIENT_SECRET"
+      }
+    }
+  }
+}
+``
+Replace the following:
+`OAUTH_CLIENT_ID`: The client ID you created.
+`OAUTH_CLIENT_SECRET`: The client secret you created.
+Save `mcp_config.json`.
+Authenticate the MCP server. You can authenticate using either the GUI settings or the CLI:
+For Antigravity IDE or GUI (Antigravity 2.0):
+Open your settings screen (e.g., click Settings at the bottom-left or open Antigravity User Settings).
+Navigate to Customizations.
+Under Installed MCP Servers, click Refresh.
+Find `workspace-universal` in the list, click Authenticate, sign in to your Google Account, copy the authorization code, paste it into the input dialog, and click Submit.
+For Antigravity CLI:
+Start Antigravity CLI:
+``agy
+``
+Open the interactive MCP management panel by running:
+``/mcp
+``
+Use the arrow keys to select `workspace-universal`, move to the Authenticate action, and press Enter. Complete the sign-in flow in your browser, copy the authorization code, paste it into the terminal prompt, and press Enter.
+Verify that the server is correctly configured and running:
+For Antigravity IDE or GUI: A Sign out button is displayed next to `workspace-universal` under Customizations > Installed MCP Servers.
+For Antigravity CLI: Open the `/mcp` panel to view your configured MCP servers. Verified and authenticated servers display Authed next to their names inside the interactive TUI panel. You can select the `workspace-universal` server under the dashboard view to inspect its status and list all of its available tools.
+Claude
+To add the Universal Search MCP Server to Claude, configure a custom
+connector.
+Create an OAuth 2.0 client ID and secret of type Web application. For
+instructions, see Configure the Google Workspace MCP servers.
+In Claude settings, add a custom connector:
+Server name: `Universal Search MCP Server`
+Remote MCP server URL: `https://workspacemcp.googleapis.com/mcp/v1`
+OAuth client ID and OAuth client secret: Enter your credentials.
+Scopes: Include `https://www.googleapis.com/auth/gmail.readonly`, `https://www.googleapis.com/auth/drive.readonly`, `https://www.googleapis.com/auth/calendar.readonly`, and `https://www.googleapis.com/auth/chat.messages.readonly`.
+Test the Universal Search MCP Server
+Try asking your MCP client questions that require searching across different
+products:
+"Find anything related to Project X across my email, docs, and chat messages."
+"When is my next meeting about the marketing plan, and what are the latest notes and chat messages on it?"
+If the tools execute successfully and you receive relevant responses from
+multiple products, your Universal Search MCP Server is correctly configured.
+Supported tools
+The Universal Search MCP Server offers the following tool:
+`search_corpus`: Performs a search across multiple Google Workspace
+products (Google Drive, Gmail, Google Calendar, and
+Google Chat) based on the provided query.
+    Send feedback

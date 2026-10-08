@@ -1,0 +1,18 @@
+{
+  "name": "workspace-search-mcp-claude",
+  "owner": {
+    "name": "xbill9",
+    "url": "https://github.com/xbill9"
+  },
+  "metadata": {
+    "description": "Google's Universal Search MCP server for Workspace in Claude Code, as a plugin.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "google-workspace-search-mcp",
+      "source": "./plugin",
+      "description": "Set up, sign in to, search with and test the Universal Search MCP server (Gmail, Drive, Calendar and Chat in one tool) in Claude Code."
+    }
+  ]
+}

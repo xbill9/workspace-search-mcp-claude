@@ -1,0 +1,4 @@
+{"type": "system", "subtype": "init", "mcp_servers": [{"name": "workspace-universal", "status": "connected"}]}
+{"type": "assistant", "message": {"content": [{"type": "tool_use", "id": "tu1", "name": "mcp__workspace-universal__search_corpus", "input": {"query": "meeting", "pageSize": 10}}]}}
+{"type": "user", "message": {"content": [{"type": "tool_result", "tool_use_id": "tu1", "is_error": true, "content": "Error: HTTP 401 Unauthorized"}]}}
+{"type": "result", "subtype": "success", "result": "done"}

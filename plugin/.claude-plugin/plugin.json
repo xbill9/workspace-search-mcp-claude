@@ -1,0 +1,12 @@
+{
+  "name": "google-workspace-search-mcp",
+  "description": "Connect Claude Code to Google's Universal Search MCP server for Workspace (search_corpus across Gmail, Drive, Calendar and Chat): setup, sign-in, search and a read-only test.",
+  "version": "0.1.0",
+  "author": {
+    "name": "xbill9",
+    "url": "https://github.com/xbill9"
+  },
+  "homepage": "https://github.com/xbill9/workspace-search-mcp-claude",
+  "repository": "https://github.com/xbill9/workspace-search-mcp-claude",
+  "keywords": ["google-workspace", "universal-search", "search_corpus", "gmail", "google-drive", "google-calendar", "google-chat", "mcp", "oauth"]
+}

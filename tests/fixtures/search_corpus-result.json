@@ -1,0 +1,15 @@
+{
+  "items": [
+    {"driveResult": {"itemId": "d1", "title": "Q3 planning", "mimeType": "application/vnd.google-apps.document", "viewUrl": "https://docs.google.com/document/d/d1", "contentSnippet": "agenda for the planning meeting"}},
+    {"gmailResult": {"thread": {"threadId": "t1", "messages": [
+      {"messageId": "m1", "subject": "Meeting notes", "sender": "a@example.com", "snippet": "notes", "viewUrl": "https://mail.google.com/mail/#all/m1"},
+      {"messageId": "m2", "subject": "Re: Meeting notes", "sender": "b@example.com", "snippet": "thanks"}]}}},
+    {"calendarResult": {"eventId": "e1", "title": "Weekly meeting", "calendarId": "me@example.com", "start": {"dateTime": "2026-10-09T10:00:00-04:00"}, "end": {"dateTime": "2026-10-09T10:30:00-04:00"}}},
+    {"driveResult": {"itemId": "d2", "title": "Meeting template", "mimeType": "application/vnd.google-apps.document"}},
+    {"chatResult": {"messages": [
+      {"id": {"messageId": "spaces/s/messages/1", "threadId": "spaces/s/threads/1"}, "plaintextBody": "meeting moved to 3pm", "sender": {"displayName": "A"}},
+      {"id": {"messageId": "spaces/s/messages/2", "threadId": "spaces/s/threads/1"}, "plaintextBody": "ok"}]}},
+    {"gmailResult": {"thread": {"threadId": "t2", "messages": [{"messageId": "m3", "subject": "Invite: meeting"}]}}},
+    {"driveResult": {"itemId": "d3", "title": "Meeting room list", "mimeType": "application/vnd.google-apps.spreadsheet"}}
+  ]
+}

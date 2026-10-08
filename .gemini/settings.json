@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "workspace-universal": {
+      "httpUrl": "https://workspacemcp.googleapis.com/mcp/v1",
+      "oauth": {
+        "enabled": true,
+        "clientId": "${CLIENT_ID}",
+        "clientSecret": "${CLIENT_SECRET}",
+        "scopes": [
+          "https://www.googleapis.com/auth/gmail.readonly",
+          "https://www.googleapis.com/auth/drive.readonly",
+          "https://www.googleapis.com/auth/calendar.readonly",
+          "https://www.googleapis.com/auth/chat.messages.readonly"
+        ]
+      }
+    }
+  }
+}

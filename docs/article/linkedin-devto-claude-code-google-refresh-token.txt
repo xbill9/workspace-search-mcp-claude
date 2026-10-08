@@ -1,0 +1,22 @@
+More Claude Code and Google Workspace adventures.
+
+Why does Claude Code make you sign in to Gmail every hour?
+
+Claude Code asks for a refresh token the way the MCP spec says, with the offline_access scope. Google issues refresh tokens only through its own access_type=offline, and rejects offline_access as an invalid scope.
+
+Then I ran Codex CLI and Antigravity CLI against the same servers:
+
+- ⚠️ Codex CLI behaves like Claude Code: no refresh token, a sign-in every hour.
+- 🟢 Antigravity CLI sends access_type=offline and renews without a browser.
+- ❌ Antigravity asks for full mailbox access (https://mail.google.com/) and keeps the refresh token in a mode 644 file next to the client secret.
+- ❌ Every tool on one OAuth client shares one grant: revoking one Codex token signed Antigravity out too.
+
+The write-up has every command and its output, plus six ways around the hour, from signing in again to scripting the token yourself.
+
+dev.to:
+https://dev.to/gde/debugging-claude-code-and-google-mcp-quirks-8bd
+
+Medium:
+https://xbill999.medium.com/debugging-claude-code-and-google-mcp-quirks-9b0124e6a179
+
+#GDE #ClaudeCode #MCP #GoogleWorkspace #OAuth

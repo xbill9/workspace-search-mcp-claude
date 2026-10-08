@@ -1,0 +1,6 @@
+Checking MCP server health…
+
+claude.ai Claude Docs: https://api.anthropic.com/v1/pages/mcp - ✔ Connected
+plugin:nb2lite:nb2lite: python3 /home/user/nb2lite/server.py - ✔ Connected
+workspace-universal: https://workspacemcp.googleapis.com/mcp/v1 (HTTP) - ✔ Connected
+workspace-developer: https://workspace-developer.goog/mcp (HTTP) - ✔ Connected
