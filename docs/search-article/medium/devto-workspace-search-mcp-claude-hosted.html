@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.11" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Universal Search MCP for Google Workspace with Claude Code</title>
+  <meta name="description" content="Connect Claude Code to Google&#x27;s Universal Search MCP server, one search_corpus tool across Gmail, Drive, Calendar and Chat, packaged as a Claude Code skill with tests, and what the live results mean for using it." />
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <style>
+    body{font-family:-apple-system,'Segoe UI',Roboto,'Liberation Sans',Arial,sans-serif;
+         font-size:18px;line-height:1.58;max-width:42em;color:#242424;}
+    h1,h2,h3,h4{font-weight:700;line-height:1.25;margin-top:1.8em;}
+    h4{font-size:1.25em;}
+    img{max-width:100%;height:auto;display:block;margin:1.6em 0;}
+    pre{background:#f7f7f7;border:1px solid #e6e6e6;border-radius:4px;
+        padding:12px 14px;overflow-x:auto;font-size:14px;line-height:1.45;}
+    code{font-family:'Liberation Mono',Menlo,Consolas,monospace;}
+    :not(pre)>code{background:#f2f2f2;padding:1px 5px;border-radius:3px;font-size:.9em;}
+    blockquote{border-left:3px solid #ddd;margin-left:0;padding-left:1em;color:#555;}
+    hr{border:0;border-top:1px solid #e6e6e6;margin:2.4em 0;}
+  </style>
+</head>
+<body>
+<p>This article provides a step by step configuration guide for Google's
+Universal Search MCP server for Workspace with Claude Code. The setup is
+packaged as a Claude Code skill and plugin with an offline test suite,
+so Claude Code can enable the APIs, register the server, sign in,
+search, and test the result.</p>
+<figure><img src="https://raw.githubusercontent.com/xbill9/workspace-search-mcp-claude/main/docs/search-article/medium/img/devto-cover.09d61064.jpg" alt="Universal Search MCP for Google Workspace with Claude Code" /></figure>
+<p><a
+href="https://github.com/xbill9/workspace-search-mcp-claude">https://github.com/xbill9/workspace-search-mcp-claude</a></p>
+<p><strong>One tool, <code>search_corpus</code>, searches Gmail, Drive,
+Calendar and Chat in a single call, and it passes a live test from
+Claude Code. Every broad search returns about 30 results whatever
+<code>pageSize</code> says, which is more than Claude Code passes to the
+model, so counts come from a script and the model reads a saved
+file.</strong></p>
+<hr />
+<h4 id="didnt-you-already-do-this">Didn't You Already Do This?</h4>
+<p>Yes! The companion article connects Claude Code to the eight
+per-product Workspace MCP servers, and a second one works through why
+every sign-in lasts an hour:</p>
+<p><a
+href="https://dev.to/gde/mcp-configuration-for-google-workspace-with-claude-code-11om">MCP
+Configuration for Google Workspace with Claude Code</a></p>
+<p><a
+href="https://dev.to/gde/debugging-claude-code-and-google-mcp-quirks-8bd">Debugging
+Claude Code and Google MCP Quirks</a></p>
+<p>This one adds Google's newer cross-product server. The scripts, the
+sign-in handling and the skill layout carry over; the server, the
+scopes, the tests and the findings are new.</p>
+<hr />
+<h4 id="what-is-the-universal-search-mcp-server">What is the Universal
+Search MCP Server?</h4>
+<p>Google hosts one MCP server per Workspace product:
+<code>gmailmcp</code>, <code>drivemcp</code>, <code>calendarmcp</code>
+and so on, each with its own tools. The Universal Search MCP server is a
+single extra server, <code>workspacemcp.googleapis.com</code>, with a
+single tool that fans one query out to Gmail, Drive, Calendar and Chat
+and returns the results together.</p>
+<p>It is in Developer Preview, like the per-product servers. Google's
+guide documents Antigravity and Claude custom connectors; this setup
+adds Claude Code.</p>
+<hr />
+<h4 id="at-this-point-you-should-have">At This Point You Should
+Have…</h4>
+<ul>
+<li>A Google Workspace account in the Developer Preview Program, with
+admin access to its Google Cloud project.</li>
+<li>The Google Cloud CLI (<code>gcloud</code>), signed in.</li>
+<li>Claude Code. This guide used version 2.1.294.</li>
+<li>Chrome on the same machine, for the consent screen and the OAuth
+sign-in page.</li>
+<li>A clone of the repository:</li>
+</ul>
+<pre class="bash"><code>cd ~
+git clone https://github.com/xbill9/workspace-search-mcp-claude
+cd workspace-search-mcp-claude</code></pre>
+<hr />
+<h4 id="the-server">The Server</h4>
+<p><code>make probe</code> asks the server about itself without any
+credentials:</p>
+<pre class="bash"><code>make probe
+server              workspace-universal
+url                 https://workspacemcp.googleapis.com/mcp/v1
+advertises 2026-07-28  yes
+versions            2024-11-05, 2025-03-26, 2025-06-18, 2025-11-25, 2026-07-28
+legacy initialize   2025-11-25
+tools               1: search_corpus
+  search_corpus(pageSize, pageToken, query*)  readOnlyHint=True
+resource scopes     9
+  gmail     https://mail.google.com/, gmail.modify, gmail.readonly
+  drive     drive, drive.readonly
+  calendar  calendar, calendar.readonly
+  chat      chat.messages, chat.messages.readonly</code></pre>
+<p>One tool, marked read-only, with one required argument. The server
+speaks the stateless 2026-07-28 MCP specification and every version from
+2024-11-05 on, so any current client connects.</p>
+<p>Each result item holds one of four shapes: a Gmail thread with its
+messages, a Drive file, a Calendar event, or a group of Chat messages.
+Each carries a <code>viewUrl</code>.</p>
+<hr />
+<h4 id="step-1--enable-the-apis">Step 1 — Enable the APIs</h4>
+<p>The server needs the Workspace MCP API plus the API of every product
+it searches:</p>
+<pre class="bash"><code>./init.sh</code></pre>
+<p><code>init.sh</code> runs this against the project in
+<code>~/project_id.txt</code>:</p>
+<pre class="bash"><code>gcloud services enable gmail.googleapis.com \
+    drive.googleapis.com \
+    calendar-json.googleapis.com \
+    chat.googleapis.com \
+    workspacemcp.googleapis.com --project=&quot;$PROJECT_ID&quot;
+Operation &quot;operations/acat.p2-…&quot; finished successfully.</code></pre>
+<p>Google's guide for this server asks for no Chat app configuration,
+which the per-product Chat server needs.</p>
+<hr />
+<h4 id="step-2--add-the-scopes-to-the-consent-screen">Step 2 — Add the
+Scopes to the Consent Screen</h4>
+<p>One read-only scope turns on each product:</p>
+<p><img src="https://raw.githubusercontent.com/xbill9/workspace-search-mcp-claude/main/docs/search-article/medium/img/devto-workspace-search-mcp-claude-table-1.png"
+alt="Table: Corpus, Scope (https://www.googleapis.com/auth/…)" /></p>
+<p>Add them under <strong>Google Auth Platform → Data Access → Add or
+remove scopes → Manually add scopes</strong>, then
+<strong>Update</strong> and <strong>Save</strong>. A consent screen set
+up for the per-product servers already has <code>gmail.readonly</code>,
+<code>drive.readonly</code> and <code>chat.messages.readonly</code>;
+<code>calendar.readonly</code> is the one to add, because the Calendar
+server uses <code>calendar.events.readonly</code>.</p>
+<p>After the reload the sensitive-scopes table went from 13 rows to
+14.</p>
+<hr />
+<h4 id="step-3--choose-the-oauth-client">Step 3 — Choose the OAuth
+Client</h4>
+<p>The server needs a Web application OAuth client with
+<code>http://localhost:8765/callback</code> as an authorized redirect
+URI. If you followed the companion article, you already have one.</p>
+<p>Reusing it is one less console step. The cost is a shared grant: to
+Google, one OAuth client is one app, and signing any server on it in
+again while its token still works revokes every token that client
+issued. A separate client for search keeps its sign-ins apart from the
+eight per-product servers. This walk-through reused the existing
+client.</p>
+<hr />
+<h4 id="step-4--register-the-server">Step 4 — Register the Server</h4>
+<pre class="bash"><code>source ./save_oauth.sh
+./claude_setup.sh
+Adding workspace-universal to Claude Code (scope: user, corpora: gmail drive calendar chat)
+Redirect URI required on the OAuth client: http://localhost:8765/callback
+ 
+Added http MCP server workspace-universal to user config
+Added HTTP MCP server workspace-developer with URL: https://workspace-developer.goog/mcp to user config</code></pre>
+<p>The script registers the server with
+<code>claude mcp add-json --client-secret</code>, so the client secret
+goes to Claude Code's credential store and never into a config file. The
+four scopes are pinned in <code>oauth.scopes</code>.
+<code>CORPORA="drive calendar" ./claude_setup.sh</code> pins a subset,
+and the server then searches only those products.</p>
+<p>The name <code>workspace-universal</code> matches the one in Google's
+guide.</p>
+<hr />
+<h4 id="step-5--sign-in">Step 5 — Sign In</h4>
+<p>Inside Claude Code, run <code>/mcp</code>, pick
+<code>workspace-universal</code>, then <strong>Authenticate</strong>.
+From your own terminal,
+<code>claude mcp login workspace-universal</code> does the same.</p>
+<p>To have Claude drive the sign-in in Chrome, the skill uses a helper
+that prints the sign-in URL without needing a terminal:</p>
+<pre class="bash"><code>./mcp_login.sh start
+./mcp_login.sh check
+Signed in: workspace-universal</code></pre>
+<p>The request Claude Code builds carries these parameters, with the
+four pinned scopes and no <code>access_type</code>:</p>
+<pre class="plaintext"><code>host: accounts.google.com/o/oauth2/v2/auth
+parameters: client_id, code_challenge, code_challenge_method, redirect_uri, resource, response_type, scope, state
+resource: https://workspacemcp.googleapis.com/mcp/v1
+access_type present: False</code></pre>
+<p>Google's consent page then lists four read-only permissions:</p>
+<pre class="plaintext"><code>View your email messages and settings
+See and download all your Google Drive files
+See messages as well as their reactions and message content in Google Chat
+See and download any calendar you can access using your Google Calendar</code></pre>
+<hr />
+<h4 id="step-6--check-the-sign-in">Step 6 — Check the Sign-In</h4>
+<pre class="bash"><code>make verify
+server               registered  token    min left  refresh  corpora
+workspace-universal  yes         valid          13  no       gmail,drive,calendar,chat
+ 
+Google accepts the token; search_corpus can search 4 of 4 corpora.
+No refresh token: this sign-in ends when the minutes reach zero.</code></pre>
+<p><code>--verify</code> sends the token to Google's token-info
+endpoint, reads back the scopes Google granted, and maps them to
+products. A product missing from that list returns no results, whatever
+the query.</p>
+<hr />
+<h4 id="step-7--search-without-a-model">Step 7 — Search Without a
+Model</h4>
+<p><code>mcp_search.sh</code> calls <code>search_corpus</code> directly
+with the token Claude Code stored and counts the results per product in
+code:</p>
+<pre class="bash"><code>make search Q=&quot;meeting&quot;
+query: &#39;meeting&#39;  arguments sent: {&quot;query&quot;: &quot;meeting&quot;}
+ 
+corpus    results
+gmail           8
+drive           9
+calendar       13
+chat            0
+total          30
+ 
+Gmail threads hold 8 messages; Chat results hold 0 messages.</code></pre>
+<p>A list of the results follows the table, one line each with its link.
+Other queries reached Chat too:</p>
+<pre class="plaintext"><code>&#39;standup&#39;      gmail 10 drive 10 calendar  7 chat  2 total 29
+&#39;lunch&#39;        gmail  9 drive  9 calendar 10 chat  2 total 30
+&#39;today&#39;        gmail  8 drive  8 calendar 12 chat  2 total 30
+&#39;Q3 planning&#39;  gmail 12 drive  9 calendar  8 chat  0 total 29</code></pre>
+<p>Matching is broad. The <code>Q3 planning</code> results include items
+about plans and planning in general, so a specific phrase does not
+narrow the search the way a quoted search in Gmail would.</p>
+<hr />
+<h4 id="step-8--test-through-claude-code">Step 8 — Test Through Claude
+Code</h4>
+<pre class="bash"><code>make e2e
+=== 2. Through Claude Code
+ 
+server               result           calls  ok  err spilled
+workspace-universal  PASS                 1   1    0       1
+ 
+Claude Code saved the result to a file instead of passing it to the model (over its MCP output size limit); the model saw a preview. Counts below are from the server&#39;s result, which Claude Code records in the event stream.
+ 
+Results per corpus, counted from the tool results: gmail 8, drive 10, calendar 12, chat 0
+Queries the model sent: &#39;meeting&#39;</code></pre>
+<p>The test runs a headless Claude Code session allowed only
+<code>search_corpus</code> and grades it from the session's tool calls
+and tool results. The <code>spilled</code> column is the next
+section.</p>
+<hr />
+<h4 id="what-does-pagesize-do">What Does pageSize Do?</h4>
+<p>The schema offers <code>pageSize</code> and <code>pageToken</code>.
+Seven calls with the same query and different page sizes:</p>
+<pre class="plaintext"><code>pageSize  gmail drive calendar chat total  chars nextPageToken
+None          8     9       13    0    30  55076 False
+1             9     9       12    0    30  56316 False
+2             8     9       13    0    30  55076 False
+3             8     9       13    0    30  55076 False
+5             8    10       12    0    30  53002 False
+10            8     9       13    0    30  55076 False
+50            8     9       13    0    30  55076 False</code></pre>
+<p>Every call returned 30 items and no <code>nextPageToken</code>, so
+<code>pageSize</code> has no effect and there is no second page. The
+tool's own description says "Pagination is not supported for
+cross-corpus search."</p>
+<p>The split across products also moves between identical calls:</p>
+<pre class="plaintext"><code>run 1        8     9       13    0    30  55076 False
+run 2        8    10       12    0    30  53002 False
+run 3        8    10       12    0    30  53002 False</code></pre>
+<p>So a per-product count describes one response. Comparing it with the
+count from another call measures the server's ranking, which shifts.</p>
+<hr />
+<h4 id="known-issue-results-are-too-large-for-claude-code">Known Issue:
+Results Are Too Large for Claude Code</h4>
+<p>Thirty items is a lot of text. Calendar results carry whole meeting
+invitations, dial-in numbers included, and Chat results carry their
+conversations. Responses in these runs measured from 53,002 to 111,795
+characters.</p>
+<p>Claude Code 2.1.294 caps what an MCP tool passes to the model. Over
+the cap, it saves the result to a file and hands the model a notice:</p>
+<pre class="plaintext"><code>Error: result (52,547 characters) exceeds maximum allowed tokens. Output has been saved to &lt;path&gt;
+Format: JSON with schema: {items: [{...}]}
+Use jq to make structured queries (find a value, filter by field).</code></pre>
+<p>The tool result carries no error flag, so the call looks successful.
+Raising <code>MAX_MCP_OUTPUT_TOKENS</code> to 50000 moves the result
+past the first cap and into a second, size-based one:</p>
+<pre class="plaintext"><code>&lt;persisted-output&gt;
+Output too large (51.3KB). Full output saved to: &lt;path&gt;</code></pre>
+<p>The model then sees a 2 KB preview. Claude Code still records the
+server's full result in its event stream
+(<code>tool_use_result.structuredContent</code>, 30 items), which is
+where <code>mcp_test.sh</code> counts from.</p>
+<p>In practice, Claude reads the saved file with <code>jq</code> when it
+has a shell, and <code>mcp_search.sh</code> gives exact counts with no
+model in the loop.</p>
+<hr />
+<h4 id="known-issue-sign-ins-last-about-an-hour">Known Issue: Sign-Ins
+Last About an Hour</h4>
+<p>The sign-in request in Step 5 has no
+<code>access_type=offline</code>, and Google issues refresh tokens only
+through that parameter. Claude Code asks for a refresh token the MCP
+way, with the <code>offline_access</code> scope, and only when the
+authorization server lists it; Google's OpenID configuration lists
+<code>openid</code>, <code>email</code> and <code>profile</code>.</p>
+<p>So <code>--verify</code> shows <code>refresh no</code>, and the
+sign-in ends after an hour. The debugging article covers the
+investigation and two ways past the hour, a <code>headersHelper</code>
+and a local proxy. Both helpers in the companion repository now know
+<code>workspace-universal</code>.</p>
+<hr />
+<h4 id="known-issue-one-oauth-client-one-grant">Known Issue: One OAuth
+Client, One Grant</h4>
+<p>Google revokes the whole grant for an OAuth client when one of its
+tokens is revoked, and Claude Code revokes the old token whenever a
+server is signed in again. With one search server that is easy to plan
+around: sign in again only when <code>--verify</code> says
+<code>expired</code> or <code>revoked</code>.</p>
+<p>The grant reaches further when the client is shared. With the client
+from the companion article, signing <code>workspace-universal</code> in
+again while its token works also signs out Gmail, Drive and the other
+per-product servers, and the reverse.</p>
+<hr />
+<h4 id="using-the-skill--install-it">Using the Skill — Install It</h4>
+<p>The repository is a Claude Code plugin marketplace:</p>
+<pre class="plaintext"><code>/plugin marketplace add xbill9/workspace-search-mcp-claude
+/plugin install google-workspace-search-mcp@workspace-search-mcp-claude</code></pre>
+<p>Then ask Claude Code something like <em>"set up Workspace
+search"</em>. The skill checks what is already done, runs only the
+missing steps, walks through the console steps or drives them in Chrome
+when asked, signs in, and tests.</p>
+<hr />
+<h4 id="using-the-skill--what-to-ask">Using the Skill — What to Ask</h4>
+<p>Once signed in, restart Claude Code so the tool loads, then ask
+questions that span products:</p>
+<p><em>"Find anything related to Project X across my email, docs, and
+chat messages."</em></p>
+<p><em>"When is my next meeting about the marketing plan, and what are
+the latest notes and chat messages on it?"</em></p>
+<p>For "how many" questions the skill runs
+<code>mcp_search.sh --json</code> and quotes its counts.</p>
+<hr />
+<h4 id="using-the-skill--what-is-inside">Using the Skill — What Is
+Inside</h4>
+<ul>
+<li><code>SKILL.md</code>: the workflow, the troubleshooting table, and
+how to search.</li>
+<li><code>scripts/</code>: <code>bootstrap.sh</code>,
+<code>claude_setup.sh</code>, <code>mcp_login.sh</code>,
+<code>mcp_status.sh</code>, <code>mcp_search.sh</code>,
+<code>mcp_test.sh</code>, <code>mcp_probe.sh</code>, and
+<code>wsearch.py</code>, which does every count, comparison and
+grade.</li>
+<li><code>references/</code>: the tool schema and scopes, the console
+steps, the known issues, the quirks, and other MCP clients.</li>
+</ul>
+<hr />
+<h4 id="testing-the-setup">Testing the Setup</h4>
+<pre class="bash"><code>make test
+--- syntax: ok
+--- shellcheck: ok
+--- unit (wsearch.py): ok
+--- consistency: ok
+--- scripts (stub claude): ok
+--- plugin validate: ok
+0 stage(s) failed.</code></pre>
+<p>The offline suite needs no sign-in and no network. The unit tests
+cover the scope-to-product mapping, token selection, response parsing,
+per-product counting, and grading of passing, failing, never-called and
+spilled sessions. The consistency tests fail if the server name, URL,
+scopes or APIs drift between the scripts, the configs, the docs and the
+manifests, or if <code>offline_access</code> reaches the pinned scopes.
+The script tests run <code>claude_setup.sh</code> against a stand-in
+<code>claude</code> and check that the client secret arrives only
+through the environment, never in arguments or output.</p>
+<p><code>make test-live</code> adds the server check, the sign-in check
+and the end-to-end test.</p>
+<hr />
+<h4 id="mag_right-tip-count-in-code-quote-the-count">🔎 Tip: Count in
+Code, Quote the Count</h4>
+<p>A search returns 30 items across four shapes, with threads that hold
+several messages. Asking a model to count them is the job a script does
+exactly. <code>wsearch.py</code> counts per product and counts the
+messages inside threads separately; the skill quotes those numbers.</p>
+<p>Check the query too: an exact count for the wrong query is still the
+wrong answer, and <code>mcp_search.sh</code> prints the arguments it
+sent above the table.</p>
+<hr />
+<h4 id="mag_right-tip-a-missing-product-is-usually-a-missing-scope">🔎
+Tip: A Missing Product Is Usually a Missing Scope</h4>
+<p>Google's guide says the server searches only the products whose scope
+the sign-in granted, so unticking a permission on the consent page
+leaves that product out. <code>make verify</code> lists the products the
+granted scopes cover, so a product that never returns anything is a
+one-command check.</p>
+<hr />
+<h4 id="mag_right-tip--connected-means-the-server-answered">🔎 Tip: ✔
+Connected Means the Server Answered</h4>
+<p>The server lists its tool without a token, so
+<code>claude mcp list</code> shows <code>✔ Connected</code> before any
+sign-in and after a token is revoked. A tool call without a token
+returns "Method doesn't allow unregistered callers". Use
+<code>make verify</code> for sign-in state.</p>
+<hr />
+<h4 id="compare-and-contrast">Compare and Contrast</h4>
+<p><img src="https://raw.githubusercontent.com/xbill9/workspace-search-mcp-claude/main/docs/search-article/medium/img/devto-workspace-search-mcp-claude-table-2.png"
+alt="Table: Per-product servers, Universal Search" /></p>
+<p>Both can be registered side by side. The search tool's description
+tells the model to call it first when a question names no product, and
+to fall back to per-product tools only when it finds nothing.</p>
+<hr />
+<h4 id="so-which-one">So, Which One?</h4>
+<p>For finding things, Universal Search: one server, one sign-in, four
+read-only scopes, and one call across every product. Use
+<code>mcp_search.sh</code> when you need numbers.</p>
+<p>For acting on what you find, such as reading a whole document,
+drafting a reply or checking free time, keep the per-product servers.
+Give search its own OAuth client if you run both, so one sign-in never
+undoes the other.</p>
+<hr />
+<h4 id="summary">Summary</h4>
+<p>The goal of this article was to connect Claude Code to Google's
+Universal Search MCP server and package the setup as a Claude Code skill
+with tests. The key to the solution was scripting every step that has an
+API and computing every count and grade in code, from the server's own
+result. The results were:</p>
+<ul>
+<li>🟢 <strong>One read-only tool searches Gmail, Drive, Calendar and
+Chat</strong>, and all four returned results through a live
+sign-in.</li>
+<li>🟢 <strong>The live test passes</strong> directly and through a
+headless Claude Code session, graded from the tool results.</li>
+<li>🟢 <strong>The offline suite passes</strong> all six stages with no
+sign-in and no network.</li>
+<li>🟢 <strong>Four read-only scopes</strong>, pinned, one per product,
+and <code>make verify</code> maps the granted ones back to
+products.</li>
+<li>⚠️ <strong><code>pageSize</code> has no effect</strong>: every
+search returned about 30 items, and the per-product split shifts between
+identical calls.</li>
+<li>❌ <strong>Results exceed Claude Code's MCP output limit</strong>,
+so the model gets a saved file and a preview.</li>
+<li>⚠️ <strong>Sign-ins last about an hour</strong>, with no refresh
+token issued.</li>
+</ul>
+<p>Scope: one Google Workspace account in the Developer Preview, one
+Google Cloud project with an Internal consent screen, one Web
+application OAuth client shared with the eight per-product servers,
+Claude Code 2.1.294 on Linux, measured on 2026-10-08. Counts come from
+one mailbox and change with its contents and with the server's ranking.
+A separate OAuth client for search and the claude.ai connector were not
+tested.</p>
+<p>The strategy for using MCP with Google Workspace Universal Search
+from Claude Code was validated with an incremental step by step
+approach.</p>
+<hr />
+<h4 id="references">References</h4>
+<ul>
+<li><a
+href="https://github.com/xbill9/workspace-search-mcp-claude">workspace-search-mcp-claude
+| GitHub</a></li>
+<li><a
+href="https://developers.google.com/workspace/guides/universal-search-mcp">Universal
+Search MCP Server for Workspace | Google for Developers</a></li>
+<li><a
+href="https://developers.google.com/workspace/guides/configure-mcp-servers">Configure
+the Google Workspace MCP servers | Google for Developers</a></li>
+<li><a href="https://developers.google.com/workspace/preview">Google
+Workspace Developer Preview Program | Google for Developers</a></li>
+<li><a href="https://code.claude.com/docs/en/mcp">Connect Claude Code to
+tools via MCP | Claude Code Docs</a></li>
+<li><a
+href="https://dev.to/gde/mcp-configuration-for-google-workspace-with-claude-code-11om">MCP
+Configuration for Google Workspace with Claude Code | dev.to</a></li>
+<li><a
+href="https://dev.to/gde/debugging-claude-code-and-google-mcp-quirks-8bd">Debugging
+Claude Code and Google MCP Quirks | dev.to</a></li>
+</ul>
+</body>
+</html>
