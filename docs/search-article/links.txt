@@ -4,4 +4,5 @@ devto-gde  = https://dev.to/gde/universal-search-mcp-for-google-workspace-with-c
 medium     = https://xbill999.medium.com/universal-search-mcp-for-google-workspace-with-claude-code-229d985a0a84
 substack   = SKIP
 repo       = https://github.com/xbill9/workspace-search-mcp-claude
+linkedin   = https://www.linkedin.com/posts/xbill_claudecode-mcp-googleworkspace-share-7515059691639508992-db1H
 # substack draft (not for readers): https://xbill9.substack.com/publish/post/219757857
