@@ -1,0 +1,20 @@
+More Claude Code adventures.
+Can one MCP server search Gmail, Drive, Calendar and Chat at once?
+
+Google's Universal Search MCP server has one read-only tool, search_corpus, across all four. I packaged the setup as a Claude Code skill with scripts and tests, and ran it against a live sign-in.
+
+It works: all four products returned results, and the live test passes both directly and through a headless Claude Code session.
+
+Two things to know before relying on it. Every search returns about 30 items whatever pageSize says, more than Claude Code passes to the model, so the counts come from a script. And sign-ins last about an hour, with no refresh token issued.
+
+The skill pins four read-only scopes, one per product, and make verify shows which ones Google granted.
+
+Write ups are here:
+
+dev.to:
+https://dev.to/gde/universal-search-mcp-for-google-workspace-with-claude-code-3ilm
+
+Medium:
+https://xbill999.medium.com/universal-search-mcp-for-google-workspace-with-claude-code-229d985a0a84
+
+#ClaudeCode #MCP #GoogleWorkspace #GDE
